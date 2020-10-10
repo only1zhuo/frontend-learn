@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>proxy</title>
+</head>
+<body>
+  <button a-click="add" style="width: 40%; height: 50px;">增加</button>
+  <button a-click="reset" style="width: 40%; height: 50px;">重置</button>
+  <div>
+    <span>第一个绑定数据：</span>
+    <span style="color:#CC6600" a-bind="counter"></span>
+  </div>
+  <div>
+    <span>第二个绑定数据：</span>
+    <span style="color:#CCCC33" a-bind="counter"></span>
+  </div>
+  <div>
+    <span>第三个绑定数据：</span>
+    <span style="color:#336699" a-bind="counter"></span>
+  </div>
+
+  <script type="text/javascript">
+    window.onload = function() {
+      // 首次加载需要初始化数据
+      apply('counter', obj.counter)
+      bind()
+    }
+    
+    // data
+    let obj = new Proxy({counter: 0}, {
+      set: function(obj, prop, value) {
+        obj[prop] = value
+        if (prop == 'counter') {
+          apply('counter', value)
+        }
+        return true
+      }
+    })
+
+    // methods
+    function add() {
+      obj.counter++
+    }
+    function reset() {
+      obj.counter = 0
+    }
+
+    // bind event
+    function bind() {
+      let list = document.querySelectorAll('[a-click]')
+      list.forEach(item => {
+        item.onclick = function () {
+          window[item.getAttribute('a-click')]()
+        }
+      })
+    }
+
+    // bind data
+    function apply(str, val) {
+      let list = document.querySelectorAll(`[a-bind=${str}]`)
+      list.forEach(item => {
+        if (item.innerHTML !== val + '') {
+          item.innerHTML = val
+        }
+      })
+    }
+  </script>
+</body>
+</html>

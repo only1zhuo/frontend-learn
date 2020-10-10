@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ES5的 getter 和 setter</title>
+</head>
+
+<body>
+  <button a-click="add" style="width: 40%; height: 50px;">增加</button>
+  <button a-click="reset" style="width: 40%; height: 50px;">重置</button>
+  <div>
+    <span>第一个绑定数据：</span>
+    <span style="color:#CC6600" a-bind="counter"></span>
+  </div>
+  <div>
+    <span>第二个绑定数据：</span>
+    <span style="color:#CCCC33" a-bind="counter"></span>
+  </div>
+  <div>
+    <span>第三个绑定数据：</span>
+    <span style="color:#336699" a-bind="counter"></span>
+  </div>
+
+  <script type="text/javascript">
+    window.onload = function () {
+      // 首次加载需要初始化数据
+      apply('counter', obj.counter)
+      bind()
+    }
+
+    // data
+    let obj = { _counter: 0 }
+    // counter 只是一个载体，真正的值存储在 _counter
+    Object.defineProperty(obj, 'counter', {
+      get: function () {
+        //console.log('get:', counter)
+        return this._counter
+      },
+      set: function (val) {
+        this._counter = val
+        //console.log('set:', counter)
+        apply('counter', this._counter)
+      }
+    })
+
+    // methods
+    function add() {
+      obj.counter++
+    }
+    function reset() {
+      obj.counter = 0
+    }
+
+    // bind event
+    function bind() {
+      let list = document.querySelectorAll('[a-click]')
+      list.forEach(item => {
+        item.onclick = function () {
+          window[item.getAttribute('a-click')]()
+        }
+      })
+    }
+
+    // bind data
+    function apply(str, val) {
+      let list = document.querySelectorAll(`[a-bind=${str}]`)
+      list.forEach(item => {
+        if (item.innerHTML !== val + '') {
+          item.innerHTML = val
+        }
+      })
+    }
+  </script>
+</body>
+
+</html>
